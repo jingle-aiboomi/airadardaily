@@ -1,0 +1,3 @@
+[build]
+  command = "npm install && node scripts/sync-notion.js"
+  publish = "."

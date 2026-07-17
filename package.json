@@ -1,0 +1,10 @@
+{
+  "name": "airadardaily",
+  "private": true,
+  "scripts": {
+    "sync": "node scripts/sync-notion.js"
+  },
+  "dependencies": {
+    "@notionhq/client": "^2.2.15"
+  }
+}
