@@ -22,8 +22,19 @@ const notion = new Client({ auth: process.env.NOTION_TOKEN });
       start_cursor: cursor, page_size: 100,
     });
     for (const r of res.results) {
+      // serialize Notion rich text back to the site's mini-markup, so links,
+      // bold, and italics applied in Notion's UI survive the sync
+      const seg = (t) => {
+        let s = t.plain_text || '';
+        if (!s) return s;
+        if (t.annotations?.bold) s = `**${s}**`;
+        else if (t.annotations?.italic) s = `*${s}*`;
+        const url = t.href || t.text?.link?.url;
+        if (url) s = `[${s}](${url})`;
+        return s;
+      };
       const key = (r.properties['Key']?.title || []).map(t => t.plain_text).join('').trim();
-      const text = (r.properties['Text']?.rich_text || []).map(t => t.plain_text).join('');
+      const text = (r.properties['Text']?.rich_text || []).map(seg).join('');
       if (key) { content[key] = text; count++; }
     }
     cursor = res.has_more ? res.next_cursor : undefined;
