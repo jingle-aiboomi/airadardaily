@@ -1,0 +1,3 @@
+[build]
+  command = "npm install && node scripts/seed-notion.js && node scripts/sync-notion.js && node scripts/sync-content.js"
+  publish = "."
