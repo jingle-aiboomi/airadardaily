@@ -34,7 +34,11 @@ const notion = new Client({ auth: process.env.NOTION_TOKEN });
         return s;
       };
       const key = (r.properties['Key']?.title || []).map(t => t.plain_text).join('').trim();
-      const text = (r.properties['Text']?.rich_text || []).map(seg).join('');
+      // URL keys hold a raw address — take plain text, never markdown-wrap them
+      const rich = r.properties['Text']?.rich_text || [];
+      const text = key.endsWith('_url')
+        ? rich.map(t => t.plain_text).join('').trim()
+        : rich.map(seg).join('');
       if (key) { content[key] = text; count++; }
     }
     cursor = res.has_more ? res.next_cursor : undefined;
