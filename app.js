@@ -17,8 +17,12 @@ function applyContent(){
     if (typeof v === 'string' && v.trim()) el.innerHTML = md(v);
   });
   document.querySelectorAll('[data-c-href]').forEach(el => {
-    const v = CONTENT[el.dataset.cHref];
-    if (typeof v === 'string' && v.trim()) el.setAttribute('href', v);
+    let v = CONTENT[el.dataset.cHref];
+    if (typeof v !== 'string' || !v.trim()) return;
+    v = v.trim();
+    const m = v.match(/^\[[^\]]*\]\(([^)]+)\)$/); // unwrap [label](url)
+    if (m) v = m[1];
+    if (/^(https?:|mailto:|#)/.test(v)) el.setAttribute('href', v);
   });
   if (CONTENT.meta_title) document.title = CONTENT.meta_title;
 }
